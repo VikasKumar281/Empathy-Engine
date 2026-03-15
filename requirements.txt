@@ -1,0 +1,7 @@
+flask>=2.3.0
+gTTS>=2.3.2
+pydub>=0.25.1
+vaderSentiment>=3.3.2
+transformers>=4.35.0
+torch>=2.0.0
+# Optional: pyttsx3>=2.90 (offline TTS fallback, no ffmpeg needed)

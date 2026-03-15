@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empathy Engine 🎙</title>
+
+<style>
+
+:root{
+--bg:#0f172a;
+--surface:#1e293b;
+--border:#334155;
+--accent:#6366f1;
+--accent2:#818cf8;
+--text:#f1f5f9;
+--muted:#94a3b8;
+--radius:14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:'Segoe UI',system-ui,sans-serif;
+background:radial-gradient(circle at top,#1e293b,#020617);
+color:var(--text);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:2rem 1rem;
+}
+
+header{
+text-align:center;
+margin-bottom:2.5rem
+}
+
+header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1, #a78bfa, #38bdf8);
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+header p{
+color:var(--muted);
+margin-top:.6rem
+}
+
+.card{
+background:rgba(30,41,59,.65);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.06);
+border-radius:var(--radius);
+padding:1.8rem;
+width:100%;
+max-width:720px;
+margin-bottom:1.6rem;
+}
+
+.card h2{
+font-size:.9rem;
+text-transform:uppercase;
+letter-spacing:1px;
+color:var(--muted);
+margin-bottom:1rem
+}
+
+textarea{
+width:100%;
+min-height:140px;
+background:var(--bg);
+border:1px solid var(--border);
+border-radius:10px;
+color:var(--text);
+font-size:1rem;
+padding:.9rem 1rem;
+resize:vertical;
+outline:none;
+}
+
+textarea:focus{
+border-color:var(--accent)
+}
+
+.samples{
+display:flex;
+flex-wrap:wrap;
+gap:.5rem;
+margin-top:.8rem
+}
+
+.sample-btn{
+border:1px solid var(--border);
+background:transparent;
+border-radius:6px;
+color:var(--muted);
+font-size:.82rem;
+padding:.35rem .7rem;
+cursor:pointer
+}
+
+.sample-btn:hover{
+border-color:var(--accent2);
+color:var(--accent2)
+}
+
+.override-row{
+display:flex;
+align-items:center;
+gap:1rem;
+margin-top:1rem
+}
+
+select{
+background:var(--bg);
+border:1px solid var(--border);
+border-radius:8px;
+color:var(--text);
+padding:.4rem .75rem;
+}
+
+.btn-primary{
+width:100%;
+margin-top:1.2rem;
+padding:.95rem;
+background:linear-gradient(135deg,var(--accent),#818cf8);
+border:none;
+border-radius:10px;
+color:white;
+font-size:1rem;
+font-weight:700;
+cursor:pointer;
+}
+
+.btn-primary:hover{
+opacity:.9
+}
+
+.loader{
+display:none;
+justify-content:center;
+align-items:center;
+gap:.6rem;
+margin-top:1rem;
+color:var(--muted)
+}
+
+.loader.active{display:flex}
+
+.spinner{
+width:18px;
+height:18px;
+border:2px solid var(--border);
+border-top-color:var(--accent);
+border-radius:50%;
+animation:spin .7s linear infinite
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#result{display:none}
+
+.emotion-badge{
+display:inline-flex;
+align-items:center;
+gap:.4rem;
+padding:.35rem .8rem;
+border-radius:999px;
+font-size:1rem;
+font-weight:700;
+border:2px solid currentColor;
+margin-bottom:.6rem
+}
+
+.emotion-meter{
+width:100%;
+height:6px;
+background:var(--border);
+border-radius:6px;
+overflow:hidden;
+margin-bottom:1rem
+}
+
+#emotionFill{
+height:100%;
+background:linear-gradient(90deg,#6366f1,#38bdf8);
+width:0%
+}
+
+.param-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:1rem;
+margin-bottom:1rem
+}
+
+.param-box{
+background:var(--bg);
+border:1px solid var(--border);
+border-radius:10px;
+padding:.9rem
+}
+
+.param-label{
+font-size:.75rem;
+text-transform:uppercase;
+color:var(--muted)
+}
+
+.param-value{
+font-size:1.35rem;
+font-weight:700;
+color:var(--accent2)
+}
+
+.score-row{
+display:flex;
+align-items:center;
+gap:.6rem;
+margin-bottom:.45rem
+}
+
+.score-bar-bg{
+flex:1;
+height:6px;
+background:var(--border);
+border-radius:4px;
+overflow:hidden
+}
+
+.score-bar-fill{
+height:100%;
+background:linear-gradient(90deg,var(--accent),var(--accent2))
+}
+
+.ssml-box{
+background:var(--bg);
+border:1px solid var(--border);
+border-radius:8px;
+padding:.8rem;
+font-family:monospace;
+font-size:.8rem;
+color:#7dd3fc;
+margin-top:.8rem
+}
+
+audio{
+width:100%;
+margin-top:1rem
+}
+
+footer{
+margin-top:40px;
+font-size:.85rem;
+color:#64748b
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🎙 Empathy Engine</h1>
+<p>Dynamic voice synthesis that adapts to the emotion of your text</p>
+</header>
+
+<div class="card">
+
+<h2>Input Text</h2>
+
+<textarea id="textInput" placeholder="Type or paste your text here"></textarea>
+
+<div class="samples">
+
+<span style="color:var(--muted);font-size:.8rem">Try:</span>
+
+<button class="sample-btn" onclick="fillSample(this)">
+I just got promoted – this is the best day of my life! 🎉
+</button>
+
+<button class="sample-btn" onclick="fillSample(this)">
+This is completely unacceptable. Nothing is working correctly!
+</button>
+
+<button class="sample-btn" onclick="fillSample(this)">
+I'm not sure what to do. I feel a bit lost right now.
+</button>
+
+<button class="sample-btn" onclick="fillSample(this)">
+The meeting is scheduled for Tuesday at 3 PM.
+</button>
+
+</div>
+
+<div class="override-row">
+
+<label>Override emotion</label>
+
+<select id="overrideSelect">
+
+<option value="">Auto-detect</option>
+
+{% for e in emotions %}
+
+<option value="{{ e }}">{{ e.capitalize() }}</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+<button class="btn-primary" id="synthBtn" onclick="synthesize()">
+🔊 Synthesize Voice
+</button>
+
+<div class="loader" id="loader">
+
+<div class="spinner"></div>
+
+<span>Generating audio...</span>
+
+</div>
+
+</div>
+
+<div class="card" id="result">
+
+<h2>Result</h2>
+
+<div id="emotionBadge" class="emotion-badge"></div>
+
+<div class="emotion-meter">
+<div id="emotionFill"></div>
+</div>
+
+<div id="paramGrid" class="param-grid"></div>
+
+<div id="scoreBars"></div>
+
+<audio id="audioPlayer" controls></audio>
+
+<details>
+
+<summary style="cursor:pointer;color:var(--muted)">View SSML</summary>
+
+<div class="ssml-box" id="ssmlBox"></div>
+
+<button onclick="copySSML()">Copy SSML</button>
+
+</details>
+
+</div>
+
+<footer>
+
+Built with ❤️ using Flask + Transformers
+
+</footer>
+
+<script>
+
+function fillSample(btn){
+document.getElementById("textInput").value=btn.textContent.trim()
+}
+
+function copySSML(){
+navigator.clipboard.writeText(
+document.getElementById("ssmlBox").textContent
+)
+}
+
+async function synthesize(){
+
+const text=document.getElementById("textInput").value.trim()
+
+if(!text){alert("Please enter text");return}
+
+const override=document.getElementById("overrideSelect").value
+
+const loader=document.getElementById("loader")
+const result=document.getElementById("result")
+const btn=document.getElementById("synthBtn")
+
+btn.disabled=true
+loader.classList.add("active")
+
+try{
+
+const res=await fetch("/synthesize",{
+method:"POST",
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({text,override_emotion:override||null})
+})
+
+const data=await res.json()
+
+result.style.display="block"
+
+const em=data.emotion
+
+const badge=document.getElementById("emotionBadge")
+
+badge.textContent=`${em.emoji} ${em.label.toUpperCase()} • ${em.description}`
+
+badge.style.color=em.color
+
+document.getElementById("emotionFill").style.width=Math.round(em.confidence*100)+"%"
+
+const p=data.voice_parameters
+
+document.getElementById("paramGrid").innerHTML=`
+
+<div class="param-box">
+<div class="param-label">Rate</div>
+<div class="param-value">${p.rate.toFixed(2)}×</div>
+</div>
+
+<div class="param-box">
+<div class="param-label">Pitch</div>
+<div class="param-value">${p.pitch_semitones.toFixed(1)} st</div>
+</div>
+
+<div class="param-box">
+<div class="param-label">Volume</div>
+<div class="param-value">${p.volume_db.toFixed(1)} dB</div>
+</div>
+
+<div class="param-box">
+<div class="param-label">Intensity</div>
+<div class="param-value">${Math.round(em.intensity*100)}%</div>
+</div>
+
+`
+
+const audio=document.getElementById("audioPlayer")
+
+audio.src=data.audio_url+"?t="+Date.now()
+
+audio.load()
+
+document.getElementById("ssmlBox").textContent=data.ssml
+
+}catch(err){
+
+alert("Error: "+err.message)
+
+}
+
+btn.disabled=false
+loader.classList.remove("active")
+
+}
+
+</script>
+
+</body>
+</html>
