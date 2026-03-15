@@ -1,115 +1,110 @@
 🎙 Empathy Engine
 
-A small project that converts text into emotion-aware speech.
-Instead of reading text with a flat robotic voice, the system detects the emotion in the sentence and adjusts the speed, pitch, and loudness of the voice to match that emotion.
+Empathy Engine is a small experiment in combining Natural Language Processing (NLP) with Text-to-Speech (TTS) to produce more expressive audio.
+
+Instead of reading text in a flat robotic tone, the system first detects the emotion in the sentence and then adjusts the speed, pitch, and loudness of the voice accordingly.
 
 For example:
 
-A happy sentence sounds energetic and upbeat
+Input Emotion	Voice Behavior
+Happy	Faster and energetic speech
+Sad	Slower and softer voice
+Frustrated	Louder and slightly harsher tone
 
-A sad sentence sounds slower and softer
+The goal of this project is to explore how emotion detection can improve speech synthesis and make generated audio feel more natural.
 
-A frustrated sentence sounds louder and slightly harsher
+📌 What the Project Does
 
-The goal of this project was to experiment with combining NLP emotion detection and voice synthesis to create more expressive audio output.
+The Empathy Engine works in four main stages.
 
-📌 What the project does
-
-The Empathy Engine works in four main steps.
-
-1. Text input
+1️⃣ Text Input
 
 A user enters a sentence in the web interface.
 
 Example:
 
-"I can't believe this worked! I'm so happy."
-2. Emotion detection
+I can't believe this worked! I'm so happy.
 
-The system analyzes the text using an NLP model.
+The input text is then sent to the backend for emotion analysis.
 
-Primary model:
+2️⃣ Emotion Detection
 
-j-hartmann/emotion-english-distilroberta-base (HuggingFace transformer)
+The system analyzes the sentence using an NLP model.
 
-Fallback model:
+Primary Model
+Model	Library
+j-hartmann/emotion-english-distilroberta-base	HuggingFace Transformers
 
-VADER Sentiment Analyzer
+This model detects emotional categories from text.
 
-Detected emotions include:
+Fallback Model
+Model	Library
+VADER Sentiment Analyzer	vaderSentiment
 
+If the transformer cannot load, the system automatically falls back to VADER.
+
+Supported Emotions
+Emotion
 Happy
-
 Surprised
-
 Frustrated
-
 Concerned
-
 Sad
-
 Neutral
+3️⃣ Voice Modulation
 
-3. Voice modulation
+Once the emotion is detected, the system adjusts three voice parameters.
 
-Once the emotion is detected, the system adjusts three parameters:
-
-Parameter	Meaning
+Parameter	Description
 Rate	Speed of speech
 Pitch	How high or low the voice sounds
-Volume	Loudness
+Volume	Loudness of the voice
 
-The intensity of the detected emotion controls how strong the adjustment is.
+The intensity of the emotion determines how strong the modulation will be.
 
 Example:
 
-Mild happiness → slightly faster voice
-Very strong happiness → much faster and higher pitch
-4. Audio generation
+Emotion Intensity	Result
+Mild happiness	Slightly faster voice
+Strong happiness	Faster speech + higher pitch
+4️⃣ Audio Generation
 
-The system generates an MP3 audio file using TTS and applies the voice modulation.
+The system generates speech using a Text-to-Speech engine and applies voice modulation.
 
-The audio is then returned and played in the browser.
+The final output is:
+
+An MP3 audio file
+
+Played directly in the browser
 
 🧠 Emotion → Voice Mapping
 
-Each emotion is mapped to specific voice characteristics.
+Each detected emotion corresponds to specific voice characteristics.
 
 Emotion	Rate	Pitch	Volume	Description
-Happy	Faster	Higher	Slightly louder	Energetic tone
-Surprised	Much faster	High pitch	Loud	Excited tone
-Frustrated	Slightly slower	Lower pitch	Loud	Strong tone
-Concerned	Slower	Slightly lower	Slightly softer	Careful tone
+Happy	Faster	Higher	Slightly louder	Energetic and upbeat
+Surprised	Much faster	High pitch	Loud	Animated tone
+Frustrated	Slightly slower	Lower pitch	Loud	Strong and assertive
+Concerned	Slower	Slightly lower	Softer	Careful tone
 Sad	Slow	Low pitch	Soft	Low energy tone
-Neutral	Normal	Normal	Normal	Balanced voice
-⚙️ Technology Used
+Neutral	Normal	Normal	Normal	Balanced speech
+⚙️ Technology Stack
 
-This project combines a few different libraries.
+The project combines multiple tools from NLP and audio processing.
 
 Backend
-
-Flask – lightweight web server
-
+Tool	Purpose
+Flask	Lightweight web server
 Emotion Detection
-
-HuggingFace Transformers
-
-Model: emotion-english-distilroberta-base
-
-VADER Sentiment as fallback
-
+Tool	Purpose
+HuggingFace Transformers	Emotion classification
+DistilRoBERTa emotion model	NLP emotion detection
+VADER	Fallback sentiment analysis
 Speech Generation
-
-gTTS – Google Text-to-Speech
-
-Audio Processing
-
-pydub – audio manipulation
-
-Offline Voice (fallback)
-
-pyttsx3
-
+Tool	Purpose
+gTTS	Google Text-to-Speech
+pydub	Audio manipulation
+pyttsx3	Offline TTS fallback
 🧩 Project Structure
 empathy_engine/
 │
@@ -128,25 +123,14 @@ empathy_engine/
 ├── requirements.txt
 │
 └── README.md
-
-Explanation:
-
-app.py
-Flask server and API routes
-
-emotion_detector.py
-Handles emotion detection using the transformer model or VADER
-
-voice_modulator.py
-Generates speech and applies pitch/speed/volume modulation
-
-templates/index.html
-Simple web interface
-
-static/audio/
-Stores generated audio files
-
-🖥 System Requirement
+File Explanation
+File	Purpose
+app.py	Flask server and API routes
+emotion_detector.py	Emotion detection logic
+voice_modulator.py	Speech synthesis and modulation
+templates/index.html	Web interface
+static/audio	Stores generated audio files
+🖥 System Requirements
 
 The project requires FFmpeg because pydub depends on it.
 
@@ -155,14 +139,14 @@ macOS
 brew install ffmpeg
 Ubuntu / Debian
 sudo apt update
-sudo apt install ffmpeg
+sudo apt install ffmpeg -y
 Windows
 
-Download from
+Download FFmpeg from:
 
 https://ffmpeg.org/download.html
 
-Extract the zip
+Extract the ZIP file
 
 Add the bin folder to your system PATH
 
@@ -170,31 +154,26 @@ Add the bin folder to your system PATH
 
 Follow these steps.
 
-Step 1 — Clone the repository
-git clone https://github.com/yourusername/empathy-engine.git
+Step 1 — Clone the Repository
+git clone https://github.com/VikasKumar281/Empathy-Engine.git
 
-or download the ZIP.
+Move into the project directory.
 
-Then move into the folder:
-
-cd empathy_engine
-Step 2 — Create a virtual environment
+cd Empathy-Engine
+Step 2 — Create a Virtual Environment
 python -m venv venv
 
-Activate it.
+Activate the environment.
 
-Windows:
-
+Windows
 venv\Scripts\activate
-
-Mac / Linux:
-
+Mac / Linux
 source venv/bin/activate
-Step 3 — Install dependencies
+Step 3 — Install Dependencies
 pip install -r requirements.txt
-Step 4 — Run the server
+Step 4 — Run the Server
 python app.py
-Step 5 — Open the web app
+Step 5 — Open the Web App
 
 Open your browser and go to:
 
@@ -202,16 +181,14 @@ http://127.0.0.1:5000
 🔌 API Endpoint
 POST /synthesize
 
-This endpoint generates emotion-aware speech.
+Generates emotion-aware speech.
 
 Request
 {
 "text": "I just got promoted!",
 "override_emotion": null
 }
-
-Fields:
-
+Request Fields
 Field	Description
 text	Input sentence
 override_emotion	Optional manual emotion
@@ -229,34 +206,30 @@ Response Example
 },
 "audio_url": "/static/audio/speech_12345.mp3"
 }
-🎯 Why I Built This
+🎯 Motivation
 
-Most TTS systems sound flat and emotionless.
+Most text-to-speech systems produce speech that sounds flat and emotionless.
 
-This project explores how to:
+This project explores how we can:
 
 detect emotions in text
 
-translate that emotion into voice parameters
+translate emotions into voice parameters
 
-produce expressive speech
+generate more expressive speech output
 
-It was mainly built as a learning project combining NLP and speech processing.
+The project was built mainly as a learning experiment combining NLP and speech processing.
 
-📈 Possible Improvements
+📈 Future Improvements
 
-Some ideas for future work:
+Some possible future enhancements:
 
-Real-time microphone emotion detection
-
-Streaming audio output
-
-Support for multiple languages
-
-Emotion-aware chatbot responses
-
-More advanced pitch/tempo control
-
+Feature	Idea
+Real-time emotion detection	Microphone input
+Streaming speech	Generate audio continuously
+Multilingual support	Detect emotion in multiple languages
+Emotion chatbot	Emotion-aware responses
+Advanced DSP	Better pitch/tempo separation
 📜 License
 
-This project is open-source and free to use for learning or experimentation.
+This project is open-source and free to use for learning and experimentation.
